@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,9 +11,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -24,6 +23,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'drf_spectacular',
     'rest_framework',
+    'rest_framework_simplejwt',  # Adicionado para o JWT
 ]
 
 MIDDLEWARE = [
@@ -41,7 +41,7 @@ ROOT_URLCONF = 'api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Modificado para usar Path corretamente
+        'DIRS': [BASE_DIR / 'templates'],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -54,7 +54,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'api.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -79,31 +78,55 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
+# JWT Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tempo de vida do token de acesso (5 minutos)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Tempo de vida do token de refresh (1 dia)
+    'ROTATE_REFRESH_TOKENS': True,                   # Rotaciona o refresh token ao utilizá-lo
+    'BLACKLIST_AFTER_ROTATION': True,                # Revoga o token de acesso quando o refresh é feito
+    'ALGORITHM': 'HS256',                            # Algoritmo para assinar o token JWT
+    'SIGNING_KEY': 'your-secret-key',                # Chave secreta para assinatura dos tokens (substitua pela sua chave secreta)
+    'VERIFYING_KEY': None,                           # Chave pública para verificar o token (opcional)
+    'AUTH_HEADER_TYPES': ('Bearer',),                # Tipo de header para enviar o token (padrão é 'Bearer')
+    'USER_ID_FIELD': 'id',                           # Campo do usuário que será utilizado para armazenar o id no token
+    'USER_ID_CLAIM': 'user_id',                      # Nome do campo onde o ID do usuário será armazenado no token
+}
+
+# DRF Settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',  # Permissão para requerer autenticação
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',  # Permitir parsing de JSON
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',  # Respostas no formato JSON
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',  # Usando o drf_spectacular para documentação
+}
+
+# Spectacular Settings (para documentação Swagger)
 SPECTACULAR_SETTINGS = {
     "TITLE": "API de Vendas e Produtos",
     "DESCRIPTION": "Uma API para gerenciar vendas e produtos com verificação de estoque.",
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,  # Esquema é gerado pelo Swagger UI
+    "SERVE_INCLUDE_SCHEMA": False,  # Não incluir o schema na UI do Swagger
 }
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-}
- 
-# Static files (CSS, JavaScript, Images)
+
+# Static files (CSS, JavaScript, images)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',  # Usando Path para garantir que seja uma referência correta
+    BASE_DIR / 'static',  
 ]
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

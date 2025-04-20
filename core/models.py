@@ -1,7 +1,7 @@
 from django.db import models
 
 class Produto(models.Model):
-    codigo = models.CharField(max_length=50, unique=True)  # Novo campo
+    codigo = models.CharField(max_length=50, unique=True)  
     nome = models.CharField(max_length=100)
     preco = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -15,7 +15,6 @@ class Venda(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def atualizar_total(self):
-        """Atualiza o total da venda somando os subtotais dos itens"""
         total = sum(item.subtotal() for item in self.itemvenda_set.all())
         self.total = total
         self.save(update_fields=['total'])
@@ -30,7 +29,6 @@ class ItemVenda(models.Model):
     preco_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     def subtotal(self):
-        """Calcula o subtotal para este item"""
         return self.quantidade * self.preco_unitario
 
     def __str__(self):

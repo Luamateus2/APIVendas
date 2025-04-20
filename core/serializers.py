@@ -9,7 +9,6 @@ class ProdutoSerializer(serializers.ModelSerializer):
         fields = ['id', 'codigo', 'nome', 'preco']
 
 
-# Serializer para criação de itens
 class ItemVendaCreateSerializer(serializers.ModelSerializer):
     produto_id = serializers.PrimaryKeyRelatedField(queryset=Produto.objects.all(), source='produto')
 
@@ -49,7 +48,6 @@ class ItemVendaCreateSerializer(serializers.ModelSerializer):
         return data
 
 
-# ✅ Serializer de leitura dos itens
 class ItemVendaReadSerializer(serializers.ModelSerializer):
     produto = ProdutoSerializer()
     subtotal = serializers.SerializerMethodField()
@@ -62,7 +60,6 @@ class ItemVendaReadSerializer(serializers.ModelSerializer):
         return obj.subtotal()
 
 
-# ✅ Serializer de leitura da venda
 class VendaSerializer(serializers.ModelSerializer):
     itens = serializers.SerializerMethodField()
     total = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
@@ -76,7 +73,6 @@ class VendaSerializer(serializers.ModelSerializer):
         return ItemVendaReadSerializer(itens, many=True).data
 
 
-# ✅ Serializer de criação da venda
 class VendaCreateSerializer(serializers.ModelSerializer):
     itens = ItemVendaCreateSerializer(many=True)
 
@@ -94,7 +90,6 @@ class VendaCreateSerializer(serializers.ModelSerializer):
             produto = item_data['produto']
             quantidade = item_data['quantidade']
 
-            # Verificação do estoque na API FastAPI
             url_get_estoque = f"http://127.0.0.1:8004/estoques/codigo/{produto.codigo}/"
             try:
                 response = requests.get(url_get_estoque)
@@ -110,7 +105,6 @@ class VendaCreateSerializer(serializers.ModelSerializer):
                     f"Estoque insuficiente para o produto '{produto.nome}'. Estoque disponível: {qtd_estoque}."
                 )
 
-            # Criação do ItemVenda
             ItemVenda.objects.create(
                 venda=venda,
                 produto=produto,
@@ -118,10 +112,8 @@ class VendaCreateSerializer(serializers.ModelSerializer):
                 preco_unitario=produto.preco
             )
 
-            # Atualiza o total da venda
             total += quantidade * produto.preco
 
-            # Atualização do estoque via PATCH usando o código do produto
             nova_quantidade = qtd_estoque - quantidade
             url_patch_estoque = f"http://127.0.0.1:8004/estoques/codigo/{produto.codigo}?quantidade={nova_quantidade}"
 
