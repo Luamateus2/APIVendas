@@ -1,9 +1,11 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from ..models import Venda
 from ..serializers import VendaSerializer, VendaCreateSerializer
 
 class VendaViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated, )
     queryset = Venda.objects.all()
     serializer_class = VendaSerializer
 

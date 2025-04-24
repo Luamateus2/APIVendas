@@ -6,12 +6,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-@4#=*avo)0+f$*8jd9(eg6a!yi^mayv7lbrvqj3#$v#f5vwc%v'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -23,7 +21,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'drf_spectacular',
     'rest_framework',
-    'rest_framework_simplejwt',  # Adicionado para o JWT
+    'rest_framework_simplejwt', 
 ]
 
 MIDDLEWARE = [
@@ -62,7 +60,6 @@ DATABASES = {
     }
 }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -78,52 +75,47 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# JWT Settings
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  # Tempo de vida do token de acesso (5 minutos)
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    # Tempo de vida do token de refresh (1 dia)
-    'ROTATE_REFRESH_TOKENS': True,                   # Rotaciona o refresh token ao utilizá-lo
-    'BLACKLIST_AFTER_ROTATION': True,                # Revoga o token de acesso quando o refresh é feito
-    'ALGORITHM': 'HS256',                            # Algoritmo para assinar o token JWT
-    'SIGNING_KEY': 'your-secret-key',                # Chave secreta para assinatura dos tokens (substitua pela sua chave secreta)
-    'VERIFYING_KEY': None,                           # Chave pública para verificar o token (opcional)
-    'AUTH_HEADER_TYPES': ('Bearer',),                # Tipo de header para enviar o token (padrão é 'Bearer')
-    'USER_ID_FIELD': 'id',                           # Campo do usuário que será utilizado para armazenar o id no token
-    'USER_ID_CLAIM': 'user_id',                      # Nome do campo onde o ID do usuário será armazenado no token
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),  
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1), 
+    'ROTATE_REFRESH_TOKENS': True,                  
+    'BLACKLIST_AFTER_ROTATION': True,                
+    'ALGORITHM': 'HS256',                            
+    'SIGNING_KEY': 'your-secret-key',                
+    'VERIFYING_KEY': None,                           
+    'AUTH_HEADER_TYPES': ('Bearer',),                
+    'USER_ID_FIELD': 'id',                          
+    'USER_ID_CLAIM': 'user_id',                      
 }
-
-# DRF Settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',  # Permissão para requerer autenticação
+        'rest_framework.permissions.IsAuthenticated',  
     ),
     'DEFAULT_PARSER_CLASSES': (
-        'rest_framework.parsers.JSONParser',  # Permitir parsing de JSON
+        'rest_framework.parsers.JSONParser',  
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',  # Respostas no formato JSON
+        'rest_framework.renderers.JSONRenderer',  
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',  # Usando o drf_spectacular para documentação
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema', 
 }
 
-# Spectacular Settings (para documentação Swagger)
 SPECTACULAR_SETTINGS = {
     "TITLE": "API de Vendas e Produtos",
     "DESCRIPTION": "Uma API para gerenciar vendas e produtos com verificação de estoque.",
     "VERSION": "1.0.0",
-    "SERVE_INCLUDE_SCHEMA": False,  # Não incluir o schema na UI do Swagger
+    "SERVE_INCLUDE_SCHEMA": False,  
 }
 
-# Static files (CSS, JavaScript, images)
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',  
